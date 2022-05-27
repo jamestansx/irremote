@@ -1,6 +1,6 @@
 import argparse
 import logging
-from enum import Enum
+from enum import Enum, auto
 import serial
 import pyautogui
 
@@ -10,7 +10,9 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()],
 )
 logger = logging.getLogger()
-logger.level = logging.INFO
+
+last_win = None
+
 
 class Command(Enum):
     PLAY = "space"
@@ -21,6 +23,7 @@ class Command(Enum):
     FULLSCREEN = "f"
     SYSVOLUP = "volumeup"
     SYSVOLDOWN = "volumedown"
+    CYCLEWIN = auto()
 
 
 if __name__ == "__main__":
@@ -57,7 +60,19 @@ if __name__ == "__main__":
         help="specify write timeout [0.1]",
         type=float,
     )
+    parser.add_argument(
+            "--debug",
+            "-d",
+            action=argparse.BooleanOptionalAction
+            
+    )
     args = parser.parse_args()
+
+
+    if args.debug: 
+        logger.level = logging.DEBUG
+    else:
+        logger.level = logging.INFO
     try:
         port = serial.Serial(
                 port=args.port,
@@ -81,7 +96,13 @@ if __name__ == "__main__":
         window = pyautogui.getWindowsWithTitle("Youtube")
         try:
             command = port.readline().decode().strip(" \r\n\b")
+            logging.debug(f"command: {command} is pressed")
             if command not in Command.__members__:
+                continue
+
+            if isinstance(Command[command].value, int):
+                window[-1].activate()
+                last_win = pyautogui.getActiveWindow()
                 continue
 
             pyautogui.press(Command[command].value)

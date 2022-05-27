@@ -38,15 +38,20 @@ void loop() {
                     if (useSysVol) sendCommand("SYSVOLDOWN");
                     else sendCommand("VOLDOWN");
                     break;
-                case 0x9    : useSysVol = !useSysVol;           break;
+                case 0x9    : 
+                    if (millis() - lastPressTime > MAX_TIME) useSysVol = !useSysVol;
+                    lastPressTime = millis();
+                    if (DEBUG) Serial.println(useSysVol);
+                    break;
                 case 0x15   : 
                     if (useSysVol) sendCommand("SYSVOLUP");
                     else sendCommand("VOLUP");
                     break;
+                case 0x16   : sendCommand("FULLSCREEN", true);  break;
                 case 0x40   : sendCommand("FASTF");             break;
                 case 0x43   : sendCommand("PLAY", true);        break;
                 case 0x44   : sendCommand("REWIND");            break;
-                case 0x16    : sendCommand("FULLSCREEN", true);  break;
+                case 0x46   : sendCommand("CYCLEWIN", true);    break;
                 default     :                                   break;
             }
         }
