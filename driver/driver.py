@@ -18,6 +18,10 @@ class Command(Enum):
     REWIND = "left"
     VOLUP = "up"
     VOLDOWN = "down"
+    FULLSCREEN = "f"
+    SYSVOLUP = "volumeup"
+    SYSVOLDOWN = "volumedown"
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -74,6 +78,7 @@ if __name__ == "__main__":
         logger.info("Activated YouTube window")
 
     while True:
+        window = pyautogui.getWindowsWithTitle("Youtube")
         try:
             command = port.readline().decode().strip(" \r\n\b")
             if command not in Command.__members__:

@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include <IRremote.hpp>
 
-int on = 0;
+bool useSysVol = false;
 unsigned long lastPressTime = millis();
 
 void sendCommand(char* command, bool lockPressDown = false){ 
@@ -31,14 +31,22 @@ void setup() {
 void loop() {
     if (IrReceiver.decode()) {
         if (IrReceiver.decodedIRData.protocol != UNKNOWN){ 
-            IrReceiver.printIRResultShort(&Serial); 
+            //IrReceiver.printIRResultShort(&Serial);
             switch (IrReceiver.decodedIRData.command) {
-                case 0x7    : sendCommand("VOLDOWN");       break;
-                case 0x15   : sendCommand("VOLUP");         break;
-                case 0x40   : sendCommand("FASTF");         break;
-                case 0x43   : sendCommand("PLAY", true);    break;
-                case 0x44   : sendCommand("REWIND");        break;
-                default     :                               break;
+                case 0x7    : 
+                    if (useSysVol) sendCommand("SYSVOLDOWN");
+                    else sendCommand("VOLDOWN");
+                    break;
+                case 0x9    : useSysVol = !useSysVol;           break;
+                case 0x15   : 
+                    if (useSysVol) sendCommand("SYSVOLUP");
+                    else sendCommand("VOLUP");
+                    break;
+                case 0x40   : sendCommand("FASTF");             break;
+                case 0x43   : sendCommand("PLAY", true);        break;
+                case 0x44   : sendCommand("REWIND");            break;
+                case 0xC    : sendCommand("FULLSCREEN", true);  break;
+                default     :                                   break;
             }
         }
         IrReceiver.resume();
