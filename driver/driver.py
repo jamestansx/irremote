@@ -9,8 +9,8 @@ class Command(Enum):
     PLAY = "space"
     FASTF = "right"
     REWIND = "left"
-    VOLUP = "volumeup"
-    VOLDOWN = "volumedown"
+    VOLUP = "up"
+    VOLDOWN = "down"
 
 if __name__ == "__main__":
     try:
@@ -23,8 +23,8 @@ if __name__ == "__main__":
     except serial.SerialException:
         print("Cannot find port")
 
-    pyautogui.getWindowsWithTitle("Youtube")[0].maximize()
     pyautogui.getWindowsWithTitle("Youtube")[0].activate()
+    pyautogui.press("f") #fullscreen
     while True:
         try:
             command = port.readline().decode().strip(" \r\n\b")
