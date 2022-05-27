@@ -31,7 +31,7 @@ void setup() {
 void loop() {
     if (IrReceiver.decode()) {
         if (IrReceiver.decodedIRData.protocol != UNKNOWN){ 
-            //IrReceiver.printIRResultShort(&Serial); 
+            IrReceiver.printIRResultShort(&Serial); 
             switch (IrReceiver.decodedIRData.command) {
                 case 0x7    : sendCommand("VOLDOWN");       break;
                 case 0x15   : sendCommand("VOLUP");         break;
