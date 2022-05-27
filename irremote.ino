@@ -1,3 +1,4 @@
+#define DEBUG true 
 #define DECODE_NEC
 #define MAX_TIME 150
 #define RECV_PIN 7
@@ -31,7 +32,7 @@ void setup() {
 void loop() {
     if (IrReceiver.decode()) {
         if (IrReceiver.decodedIRData.protocol != UNKNOWN){ 
-            //IrReceiver.printIRResultShort(&Serial);
+            if (DEBUG) IrReceiver.printIRResultShort(&Serial);
             switch (IrReceiver.decodedIRData.command) {
                 case 0x7    : 
                     if (useSysVol) sendCommand("SYSVOLDOWN");
@@ -45,7 +46,7 @@ void loop() {
                 case 0x40   : sendCommand("FASTF");             break;
                 case 0x43   : sendCommand("PLAY", true);        break;
                 case 0x44   : sendCommand("REWIND");            break;
-                case 0xC    : sendCommand("FULLSCREEN", true);  break;
+                case 0x16    : sendCommand("FULLSCREEN", true);  break;
                 default     :                                   break;
             }
         }
