@@ -2,6 +2,9 @@
 #define DECODE_NEC
 #define MAX_TIME 150
 #define RECV_PIN 7
+#define BAUDRATE 115200
+#define LOG(message) if(DEBUG) Serial.println(message)
+
 
 #include <Arduino.h>
 #include <IRremote.hpp>
@@ -11,18 +14,18 @@ unsigned long lastPressTime = millis();
 
 void sendCommand(char* command, bool lockPressDown = false){ 
     if (lockPressDown){
-        //Serial.print("locked: ");
+        LOG("locked");
         if (millis() - lastPressTime > MAX_TIME) Serial.println(command);
         lastPressTime = millis();
     }
     else {
-        //Serial.print("unlocked: ");
+        LOG("unlocked");
         Serial.println(command);
     }
 }
-    
+
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(BAUDRATE);
     IrReceiver.begin(RECV_PIN, ENABLE_LED_FEEDBACK);
     Serial.print("Ready to receive IR signals of protocols: ");
     printActiveIRProtocols(&Serial);
@@ -30,7 +33,7 @@ void setup() {
 }
 
 void loop() {
-    if (IrReceiver.decode()) {
+    if (IrReceiver.decode()){
         if (IrReceiver.decodedIRData.protocol != UNKNOWN){ 
             if (DEBUG) IrReceiver.printIRResultShort(&Serial);
             switch (IrReceiver.decodedIRData.command) {
@@ -41,7 +44,7 @@ void loop() {
                 case 0x9    : 
                     if (millis() - lastPressTime > MAX_TIME) useSysVol = !useSysVol;
                     lastPressTime = millis();
-                    if (DEBUG) Serial.println(useSysVol);
+                    LOG(useSysVol);
                     break;
                 case 0x15   : 
                     if (useSysVol) sendCommand("SYSVOLUP");
@@ -55,8 +58,8 @@ void loop() {
                 default     :                                   break;
             }
         }
-        IrReceiver.resume();
     }
+    IrReceiver.resume();
 }
 
 
