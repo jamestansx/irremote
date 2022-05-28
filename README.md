@@ -1,5 +1,4 @@
 # IRRemote
-
 ## Usage 
 
 > Run `driver.py` to start the controller
@@ -22,3 +21,7 @@ Press the following buttons to trigger the command:-
 ## Block Diagram
 
 ![Block Diagram](./assests/block_diagram.png)
+
+## Circuit Diagram
+
+![Circuit Diagram](./assests/circuit_diagram.png)
