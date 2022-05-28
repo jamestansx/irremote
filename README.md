@@ -18,3 +18,7 @@ Press the following buttons to trigger the command:-
 | 0          | fullscreen           |
 | CH         | cycle windows        |
 | EQ         | toggle system volume |
+
+## Block Diagram
+
+![Block Diagram](./assests/block_diagram.png)
