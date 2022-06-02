@@ -67,12 +67,8 @@ if __name__ == "__main__":
             
     )
     args = parser.parse_args()
+    logger.level = logging.DEBUG if args.debug else logging.INFO
 
-
-    if args.debug: 
-        logger.level = logging.DEBUG
-    else:
-        logger.level = logging.INFO
     try:
         port = serial.Serial(
                 port=args.port,
@@ -86,11 +82,7 @@ if __name__ == "__main__":
         exit(-1)
 
     window = pyautogui.getWindowsWithTitle("Youtube")
-    if not window:
-        logging.warning("No YouTube window is detected!!")
-    if window:
-        window[0].activate() # Choose first window as default
-        logger.info("Activated YouTube window")
+    logging.warning("No YouTube window is detected!!") if not window else None
 
     while True:
         window = pyautogui.getWindowsWithTitle("Youtube")
@@ -101,9 +93,13 @@ if __name__ == "__main__":
                 continue
 
             if isinstance(Command[command].value, int):
-                window[-1].activate()
-                last_win = pyautogui.getActiveWindow()
-                continue
+                try:
+                    window[-1].activate()
+                    last_win = pyautogui.getActiveWindow()
+                except IndexError:
+                    pass
+                finally:
+                    continue
 
             pyautogui.press(Command[command].value)
             logger.info(f"Command:{Command[command].name} is sent")
